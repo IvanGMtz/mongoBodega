@@ -1,0 +1,921 @@
+use("db_campus_bodegas");
+
+db.createCollection("users", {
+    capped: true,
+    size: 6500,
+    max: 15000,
+    validator: {
+        $jsonSchema: {
+            bsonType: 'object',
+            additionalProperties: false,
+            required: ['id', 'nombre', 'email', 'estado', 'password'],
+            properties: {
+                _id: {
+                    bsonType: 'objectId'
+                },
+                id: {
+                    bsonType: "int",
+                    description: 'La id es obligatoria y debe ser numérica'
+                },
+                nombre: {
+                    bsonType: 'string',
+                    description: 'El nombre_usuario es obligatorio',
+                    pattern: '^[a-zA-ZáÁéÉíÍóÓúÚüÜñÑ ]+$'
+                },
+                email: {
+                    bsonType: 'string',
+                    description: 'El email es obligatorio',
+                    pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'
+                },
+                estado: {
+                    bsonType: 'int',
+                    description: 'El estado es obligatorio'
+                },
+                created_by: {
+                    bsonType: 'int',
+                    description: 'El created_by es obligatorio'
+                },
+                update_by: {
+                    bsonType: 'int',
+                    description: 'El update_by es obligatorio'
+                },
+                password: {
+                    bsonType: 'string',
+                    description: 'El password es obligatorio'
+                },
+                created_at: {
+                    bsonType: 'date',
+                    description: 'El created_at no es obligatorio ni opcional pero el dato debe ser en formato fecha',
+                    pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
+                },
+                updated_at: {
+                    bsonType: 'date',
+                    description: 'El updated_at no es obligatorio ni opcional pero el dato debe ser en formato fecha',
+                    pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
+                },
+                deleted_at: {
+                    bsonType: 'date',
+                    description: 'El deleted_at no es obligatorio ni opcional pero el dato debe ser en formato fecha',
+                    pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
+                }
+            }
+        }
+    }
+});
+
+db.createCollection("bodegas", {
+    capped: true,
+    size: 6500,
+    max: 1000,
+    validator: {
+        $jsonSchema: {
+            bsonType: 'object',
+            additionalProperties: false,
+            required: ['id', 'nombre', 'id_responsable', 'estado'],
+            properties: {
+                _id: {
+                    bsonType: 'objectId'
+                },
+                id: {
+                    bsonType: "int",
+                    description: 'La id es obligatoria y debe ser numérica'
+                },
+                nombre: {
+                    bsonType: 'string',
+                    description: 'El nombre es obligatorio',
+                    pattern: '^[a-zA-ZáÁéÉíÍóÓúÚüÜñÑ0-9 ]+$'
+                },
+                id_responsable: {
+                    bsonType: 'int',
+                    description: 'El id_responsable es obligatorio'
+                },
+                estado: {
+                    bsonType: 'int',
+                    description: 'El estado es obligatorio'
+                },
+                created_by: {
+                    bsonType: 'int',
+                    description: 'El created_by es obligatorio'
+                },
+                update_by: {
+                    bsonType: 'int',
+                    description: 'El update_by es obligatorio'
+                },
+                created_at: {
+                    bsonType: 'date',
+                    description: 'El created_at no es obligatorio ni opcional pero el dato debe ser en formato fecha',
+                    pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
+                },
+                updated_at: {
+                    bsonType: 'date',
+                    description: 'El updated_at no es obligatorio ni opcional pero el dato debe ser en formato fecha',
+                    pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
+                },
+                deleted_at: {
+                    bsonType: 'date',
+                    description: 'El deleted_at no es obligatorio ni opcional pero el dato debe ser en formato fecha',
+                    pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
+                }
+            }
+        }
+    }
+});
+
+db.createCollection("productos", {
+    capped: true,
+    size: 6500,
+    max: 10000,
+    validator: {
+        $jsonSchema: {
+            bsonType: 'object',
+            additionalProperties: false,
+            required: ['id', 'nombre', 'estado', 'created_by'],
+            properties: {
+                _id: {
+                    bsonType: 'objectId'
+                },
+                id: {
+                    bsonType: "int",
+                    description: 'La id es obligatoria y debe ser numérica'
+                },
+                nombre: {
+                    bsonType: 'string',
+                    description: 'El nombre es obligatorio',
+                    pattern: '^[a-zA-ZáÁéÉíÍóÓúÚüÜñÑ ]+$'
+                },
+                descripcion: {
+                    bsonType: 'string',
+                    description: 'La descripción es obligatoria',
+                    pattern: '^[a-zA-ZáÁéÉíÍóÓúÚüÜñÑ ]+$'
+                },
+                estado: {
+                    bsonType: 'int',
+                    description: 'El estado es obligatorio'
+                },
+                created_by: {
+                    bsonType: 'int',
+                    description: 'El created_by es obligatorio'
+                }
+            },
+            allOf: [
+                {
+                    properties: {
+                        update_by: {
+                            bsonType: 'int',
+                            description: 'El update_by es obligatorio'
+                        },
+                        created_at: {
+                            bsonType: 'date',
+                            description: 'El created_at no es obligatorio ni opcional pero se acepta el dato',
+                            pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
+                        },
+                        updated_at: {
+                            bsonType: 'date',
+                            description: 'El updated_at no es obligatorio ni opcional pero se acepta el dato',
+                            pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
+                        },
+                        deleted_at: {
+                            bsonType: 'date',
+                            description: 'El deleted_at no es obligatorio ni opcional pero se acepta el dato',
+                            pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
+                        }
+                    }
+                }
+            ]
+        }
+    }
+});
+
+db.createCollection("inventarios", {
+    capped: true,
+    size: 6500,
+    max: 20000,
+    validator: {
+        $jsonSchema: {
+            bsonType: 'object',
+            additionalProperties: false,
+            required: ['id', 'id_bodega', 'id_producto', 'cantidad'],
+            properties: {
+                _id: {
+                    bsonType: 'objectId'
+                },
+                id: {
+                    bsonType: 'int',
+                    description: 'La id es obligatoria y debe ser numérica'
+                },
+                id_bodega: {
+                    bsonType: 'int',
+                    description: 'El id_bodega es obligatorio'
+                },
+                id_producto: {
+                    bsonType: 'int',
+                    description: 'El id_producto es obligatorio'
+                },
+                cantidad: {
+                    bsonType: 'int',
+                    description: 'La cantidad es obligatoria'
+                },
+                created_by: {
+                    bsonType: 'int',
+                    description: 'El created_by es obligatorio'
+                },
+                update_by: {
+                    bsonType: 'int',
+                    description: 'El update_by es obligatorio'
+                },
+                created_at: {
+                    bsonType: 'string',
+                    description: 'El created_at no es obligatorio ni opcional pero se acepta el dato',
+                    pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
+                },
+                updated_at: {
+                    bsonType: 'string',
+                    description: 'El updated_at no es obligatorio ni opcional pero se acepta el dato',
+                    pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
+                },
+                deleted_at: {
+                    bsonType: 'string',
+                    description: 'El deleted_at no es obligatorio ni opcional pero se acepta el dato',
+                    pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
+                }
+            }
+        }
+    }
+});
+
+db.createCollection("historiales", {
+    capped: true,
+    size: 6500,
+    max: 50000,
+    validator: {
+        $jsonSchema: {
+            bsonType: 'object',
+            additionalProperties: false,
+            required: ['id', 'cantidad', 'id_bodega_origen', 'id_bodega_destino', 'id_inventario'],
+            properties: {
+                _id: {
+                    bsonType: 'objectId'
+                },
+                id: {
+                    bsonType: "int",
+                    description: 'La id es obligatoria y debe ser numérica'
+                },
+                cantidad: {
+                    bsonType: 'int',
+                    description: 'La cantidad es obligatoria'
+                },
+                id_bodega_origen: {
+                    bsonType: 'int',
+                    description: 'El id_bodega_origen es obligatorio'
+                },
+                id_bodega_destino: {
+                    bsonType: 'int',
+                    description: 'El id_bodega_destino es obligatorio'
+                },
+                id_inventario: {
+                    bsonType: 'int',
+                    description: 'El id_inventario es obligatorio'
+                },
+                created_by: {
+                    bsonType: 'int',
+                    description: 'El created_by es obligatorio'
+                },
+                update_by: {
+                    bsonType: 'int',
+                    description: 'El update_by es obligatorio'
+                },
+                created_at: {
+                    bsonType: 'string',
+                    description: 'El created_at no es obligatorio ni opcional pero se acepta el dato',
+                    pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
+                },
+                updated_at: {
+                    bsonType: 'string',
+                    description: 'El updated_at no es obligatorio ni opcional pero se acepta el dato',
+                    pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
+                },
+                deleted_at: {
+                    bsonType: 'string',
+                    description: 'El deleted_at no es obligatorio ni opcional pero se acepta el dato',
+                    pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
+                }
+            },
+        }
+    }
+});
+
+db.createCollection("counters");
+db.counters.insertMany([
+  { id: "usersId", sequence_value: 0 },
+  { id: "bodegasId", sequence_value: 0 },
+  { id: "productosId", sequence_value: 0 }
+]);
+
+function siguienteId(coleccion) {
+  const sequenceDocument = db.counters.findOneAndUpdate(
+      { id: `${coleccion}Id` },
+      { $inc: { sequence_value: 1 } },
+      { returnDocument: "after" }
+  );
+  return sequenceDocument.sequence_value;
+}
+
+db.users.insertMany([
+    {
+        id: Number(siguienteId("users")),
+        nombre: 'Alejandro',
+        email: 'alejandro@example.com',
+        estado: 1,
+        password: '12345'
+    },
+    {
+        id: Number(siguienteId("users")),
+        nombre: 'Beatriz',
+        email: 'beatriz@example.com',
+        estado: 1,
+        password: '12345'
+    },
+    {
+        id: Number(siguienteId("users")),
+        nombre: 'Carlos',
+        email: 'carlos@example.com',
+        estado: 1,
+        password: '12345'
+    },
+    {
+        id: Number(siguienteId("users")),
+        nombre: 'Diana',
+        email: 'diana@example.com',
+        estado: 1,
+        password: '12345'
+    },
+    {
+        id: Number(siguienteId("users")),
+        nombre: 'Eduardo',
+        email: 'eduardo@example.com',
+        estado: 1,
+        password: '12345'
+    },
+    {
+        id: Number(siguienteId("users")),
+        nombre: 'Fernanda',
+        email: 'fernanda@example.com',
+        estado: 1,
+        password: '12345'
+    },
+    {
+        id: Number(siguienteId("users")),
+        nombre: 'Gabriel',
+        email: 'gabriel@example.com',
+        estado: 1,
+        password: '12345'
+    },
+    {
+        id: Number(siguienteId("users")),
+        nombre: 'Hilda',
+        email: 'hilda@example.com',
+        estado: 1,
+        password: '12345'
+    },
+    {
+        id: Number(siguienteId("users")),
+        nombre: 'Ivan',
+        email: 'ivan@example.com',
+        estado: 1,
+        password: '12345'
+    },
+    {
+        id: Number(siguienteId("users")),
+        nombre: 'Jasmine',
+        email: 'jasmine@example.com',
+        estado: 1,
+        password: '12345'
+    }
+]);
+
+db.bodegas.insertMany([
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Bodega Principal',
+        id_responsable: 16,
+        estado: 1,
+        created_by: 16,
+        created_at: ISODate('2022-06-02')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Almacén Central',
+        id_responsable: 18,
+        estado: 1,
+        created_by: 18,
+        created_at: ISODate('2022-06-02')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Bodega Norte',
+        id_responsable: 18,
+        estado: 1,
+        created_by: 18,
+        created_at: ISODate('2022-06-02')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Depósito Grande',
+        id_responsable: 17,
+        estado: 1,
+        created_by: 17,
+        created_at: ISODate('2022-06-02')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Bodega de Insumos',
+        id_responsable: 11,
+        estado: 1,
+        created_by: 11,
+        created_at: ISODate('2022-06-02')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Almacén de Productos',
+        id_responsable: 18,
+        estado: 1,
+        created_by: 18,
+        created_at: ISODate('2022-06-02')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Bodega de Herramientas',
+        id_responsable: 13,
+        estado: 1,
+        created_at: ISODate('2022-06-02'),
+        updated_at: ISODate('2022-06-02')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Bodega de Lácteos',
+        id_responsable: 13,
+        estado: 1,
+        created_at: ISODate('2022-06-02'),
+        updated_at: ISODate('2022-06-02')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Almacén Soto Uno',
+        id_responsable: 15,
+        estado: 1,
+        created_at: ISODate('2022-06-02'),
+        updated_at: ISODate('2022-06-02')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Almacén Soto Dos',
+        id_responsable: 15,
+        estado: 1,
+        created_at: ISODate('2022-06-02'),
+        updated_at: ISODate('2022-06-02')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Bodega de Pruebas',
+        id_responsable: 12,
+        estado: 1,
+        created_at: ISODate('2022-06-02'),
+        updated_at: ISODate('2022-06-02')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Bodega de Electrónicos',
+        id_responsable: 13,
+        estado: 1,
+        created_at: ISODate('2022-06-02'),
+        updated_at: ISODate('2022-06-02')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Depósito de Materiales',
+        id_responsable: 12,
+        estado: 1,
+        created_at: ISODate('2022-06-03'),
+        updated_at: ISODate('2022-06-03')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Bodega Juan Pablo',
+        id_responsable: 19,
+        estado: 1,
+        created_at: ISODate('2022-06-03'),
+        updated_at: ISODate('2022-06-03')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Mi Casa Almacén',
+        id_responsable: 18,
+        estado: 1,
+        created_at: ISODate('2022-06-03'),
+        updated_at: ISODate('2022-06-03')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Casa Medrano Bodega',
+        id_responsable: 17,
+        estado: 1,
+        created_at: ISODate('2022-06-03'),
+        updated_at: ISODate('2022-06-03')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Centro de Almacenamiento',
+        id_responsable: 18,
+        estado: 1,
+        created_at: ISODate('2022-06-03'),
+        updated_at: ISODate('2022-06-03')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Bodega 35',
+        id_responsable: 11,
+        estado: 1,
+        created_at: ISODate('2022-06-24'),
+        updated_at: ISODate('2022-06-24')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Almacén Principal',
+        id_responsable: 11,
+        estado: 1,
+        created_at: ISODate('2022-06-29'),
+        updated_at: ISODate('2022-06-29')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Bodega Fácil',
+        id_responsable: 11,
+        estado: 1,
+        created_at: ISODate('2022-06-29'),
+        updated_at: ISODate('2022-06-29')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Depósito Rápido',
+        id_responsable: 11,
+        estado: 1,
+        created_at: ISODate('2022-06-29'),
+        updated_at: ISODate('2022-06-29')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Bodega de Reservas',
+        id_responsable: 11,
+        estado: 1,
+        created_at: ISODate('2022-06-29'),
+        updated_at: ISODate('2022-06-29')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Almacén de Emergencia',
+        id_responsable: 11,
+        estado: 1,
+        created_at: ISODate('2022-06-29'),
+        updated_at: ISODate('2022-06-29')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Bodega Avanzada',
+        id_responsable: 11,
+        estado: 1,
+        created_at: ISODate('2022-07-01'),
+        updated_at: ISODate('2022-07-01')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Desarrollo Bodega',
+        id_responsable: 11,
+        estado: 1,
+        created_at: ISODate('2022-07-01'),
+        updated_at: ISODate('2022-07-01')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Bodega Innovadora',
+        id_responsable: 11,
+        estado: 1,
+        created_at: ISODate('2022-07-11'),
+        updated_at: ISODate('2022-07-11')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Bodega 59',
+        id_responsable: 11,
+        estado: 1,
+        created_at: ISODate('2022-07-11'),
+        updated_at: ISODate('2022-07-11')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Depósito Atuesta',
+        id_responsable: 11,
+        estado: 11,
+        created_at: ISODate('2022-07-21'),
+        updated_at: ISODate('2022-07-21')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Almacén Atuesta 555',
+        id_responsable: 11,
+        estado: 11,
+        created_at: ISODate('2022-07-21'),
+        updated_at: ISODate('2022-07-21')
+    },
+    {
+        id: Number(siguienteId("bodegas")),
+        nombre: 'Bodega A',
+        id_responsable: 11,
+        estado: 1,
+        created_at: ISODate('2023-05-25'),
+        updated_at: ISODate('2023-05-25')
+    }
+]);
+
+db.productos.insertMany([
+    {
+        id: Number(siguienteId("productos")),
+        nombre: 'Camisa',
+        descripcion: 'Camisa de algodón',
+        estado: 1,
+        created_by: 16
+    },
+    {
+        id: Number(siguienteId("productos")),
+        nombre: 'Pantalón',
+        descripcion: 'Pantalón vaquero',
+        estado: 1,
+        created_by: 14
+    },
+    {
+        id: Number(siguienteId("productos")),
+        nombre: 'Zapatos',
+        descripcion: 'Zapatos de cuero',
+        estado: 1,
+        created_by: 13
+    },
+    {
+        id: Number(siguienteId("productos")),
+        nombre: 'Sombrero',
+        descripcion: 'Sombrero de paja',
+        estado: 1,
+        created_by: 20
+    },
+    {
+        id: Number(siguienteId("productos")),
+        nombre: 'Bufanda',
+        descripcion: 'Bufanda tejida',
+        estado: 1,
+        created_by: 19
+    },
+    {
+        id: Number(siguienteId("productos")),
+        nombre: 'Reloj',
+        descripcion: 'Reloj de pulsera',
+        estado: 1,
+        created_by: 11
+    },
+    {
+        id: Number(siguienteId("productos")),
+        nombre: 'Bolso',
+        descripcion: 'Bolso de cuero',
+        estado: 1,
+        created_by: 12
+    },
+    {
+        id: Number(siguienteId("productos")),
+        nombre: 'Gafas',
+        descripcion: 'Gafas de sol',
+        estado: 1,
+        created_by: 11
+    },
+    {
+        id: Number(siguienteId("productos")),
+        nombre: 'Corbata',
+        descripcion: 'Corbata de seda',
+        estado: 1,
+        created_by: 11
+    },
+    {
+        id: Number(siguienteId("productos")),
+        nombre: 'Cinturón',
+        descripcion: 'Cinturón de piel',
+        estado: 1,
+        created_by: 19
+    }
+]);
+
+db.inventarios.insertMany([
+    {
+        id: 12,
+        id_bodega: 12,
+        id_producto: 18,
+        cantidad: 103,
+        created_by: 11,
+        created_at: '2023-05-26'
+    },
+    {
+        id: 13,
+        id_bodega: 19,
+        id_producto: 18,
+        cantidad: 220,
+        created_by: 19
+    },
+    {
+        id: 14,
+        id_bodega: 20,
+        id_producto: 13,
+        cantidad: 13,
+        created_by: 14
+    },
+    {
+        id: 18,
+        id_bodega: 19,
+        id_producto: 14,
+        cantidad: 7,
+        created_by: 15
+    },
+    {
+        id: 20,
+        id_bodega: 12,
+        id_producto: 27,
+        cantidad: 9,
+        created_by: 16
+    },
+    {
+        id: 25,
+        id_bodega: 19,
+        id_producto: 23,
+        cantidad: 45666,
+        created_at: '2022-06-03',
+        updated_at: '2022-06-03'
+    },
+    {
+        id: 27,
+        id_bodega: 26,
+        id_producto: 24,
+        cantidad: 45000,
+        created_at: '2022-06-03',
+        updated_at: '2022-06-03'
+    },
+    {
+        id: 29,
+        id_bodega: 26,
+        id_producto: 25,
+        cantidad: 45666,
+        created_at: '2022-06-03',
+        updated_at: '2022-06-03'
+    },
+    {
+        id: 31,
+        id_bodega: 26,
+        id_producto: 26,
+        cantidad: 6000,
+        created_at: '2022-06-03',
+        updated_at: '2022-06-03'
+    },
+    {
+        id: 32,
+        id_bodega: 28,
+        id_producto: 27,
+        cantidad: 89700,
+        created_at: '2022-06-03',
+        updated_at: '2022-06-03'
+    },
+    {
+        id: 33,
+        id_bodega: 23,
+        id_producto: 28,
+        cantidad: 9999,
+        created_at: '2022-06-03',
+        updated_at: '2022-06-03'
+    },
+    {
+        id: 34,
+        id_bodega: 18,
+        id_producto: 18,
+        cantidad: 7898,
+        created_at: '2022-06-03',
+        updated_at: '2022-06-03'
+    },
+    {
+        id: 35,
+        id_bodega: 18,
+        id_producto: 27,
+        cantidad: 55281,
+        created_at: '2022-06-03',
+        updated_at: '2022-06-03'
+    },
+    {
+        id: 36,
+        id_bodega: 29,
+        id_producto: 29,
+        cantidad: 5993,
+        created_at: '2022-06-03',
+        updated_at: '2022-06-03'
+    },
+    {
+        id: 37,
+        id_bodega: 29,
+        id_producto: 27,
+        cantidad: 5005,
+        created_at: '2022-06-03',
+        updated_at: '2022-06-03'
+    }
+]);
+
+db.historiales.insertMany([
+    {
+
+        id: 18,
+        cantidad: 7,
+        id_bodega_origen: 12,
+        id_bodega_destino: 18,
+        id_inventario: 18,
+        created_by: 18
+    },
+    {
+        id: 20,
+        cantidad: 9,
+        id_bodega_origen: 11,
+        id_bodega_destino: 12,
+        id_inventario: 18,
+        created_by: 15
+    },
+    {
+        id: 21,
+        cantidad: 7,
+        id_bodega_origen: 29,
+        id_bodega_destino: 30,
+        id_inventario: 36,
+        created_at: '2022-06-03',
+        updated_at: '2022-06-03'
+    },
+    {
+        id: 22,
+        cantidad: 666,
+        id_bodega_origen: 26,
+        id_bodega_destino: 24,
+        id_inventario: 27,
+        created_at: '2022-06-03',
+        updated_at: '2022-06-03'
+    },
+    {
+        id: 23,
+        cantidad: 100,
+        id_bodega_origen: 19,
+        id_bodega_destino: 18,
+        id_inventario: 41,
+        created_at: '2022-06-03',
+        updated_at: '2022-06-03'
+    },
+    {
+        id: 24,
+        cantidad: 25,
+        id_bodega_origen: 19,
+        id_bodega_destino: 26,
+        id_inventario: 41,
+        created_at: '2022-06-03',
+        updated_at: '2022-06-03'
+    },
+    {
+        id: 25,
+        cantidad: 25,
+        id_bodega_origen: 19,
+        id_bodega_destino: 26,
+        id_inventario: 41,
+        created_at: '2022-06-03',
+        updated_at: '2022-06-03'
+    },
+    {
+        id: 26,
+        cantidad: 300,
+        id_bodega_origen: 18,
+        id_bodega_destino: 12,
+        id_inventario: 42,
+        created_at: '2022-06-03',
+        updated_at: '2022-06-03'
+    },
+    {
+        id: 27,
+        cantidad: 300,
+        id_bodega_origen: 18,
+        id_bodega_destino: 12,
+        id_inventario: 42,
+        created_at: '2022-06-03',
+        updated_at: '2022-06-03'
+    },
+    {
+        id: 28,
+        cantidad: 1,
+        id_bodega_origen: 12,
+        id_bodega_destino: 11,
+        id_inventario: 67,
+        created_at: '2022-07-11',
+        updated_at: '2022-07-11'
+    }
+]);
