@@ -7,7 +7,7 @@ export let limitGet=()=>{
         standardHeaders: true, 
         legacyHeaders: false,
         skip: (req, res)=>{
-            if (req.headers["content-length"]>150) {
+            if (req.headers["content-length"]>250) {
                 res.status(413).send({
                     status: 413,
                     message: "El tamaño es incorrecto"
