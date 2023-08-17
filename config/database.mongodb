@@ -308,7 +308,8 @@ db.createCollection("counters");
 db.counters.insertMany([
   { id: "usersId", sequence_value: 0 },
   { id: "bodegasId", sequence_value: 0 },
-  { id: "productosId", sequence_value: 0 }
+  { id: "productosId", sequence_value: 0 },
+  { id: "inventariosId", sequence_value: 0 }
 ]);
 
 function siguienteId(coleccion) {
@@ -711,7 +712,7 @@ db.productos.insertMany([
 
 db.inventarios.insertMany([
     {
-        id: 12,
+        id: Number(siguienteId("inventarios")),
         id_bodega: 1,
         id_producto: 3,
         cantidad: 103,
@@ -719,35 +720,35 @@ db.inventarios.insertMany([
         created_at: '2023-05-26'
     },
     {
-        id: 13,
+        id: Number(siguienteId("inventarios")),
         id_bodega: 2,
         id_producto: 3,
         cantidad: 220,
         created_by: 19
     },
     {
-        id: 14,
+        id:  Number(siguienteId("inventarios")),
         id_bodega: 3,
         id_producto: 1,
         cantidad: 13,
         created_by: 14
     },
     {
-        id: 18,
+        id:  Number(siguienteId("inventarios")),
         id_bodega: 4,
         id_producto: 2,
         cantidad: 7,
         created_by: 15
     },
     {
-        id: 20,
+        id:  Number(siguienteId("inventarios")),
         id_bodega: 5,
         id_producto: 8,
         cantidad: 9,
         created_by: 16
     },
     {
-        id: 25,
+        id:  Number(siguienteId("inventarios")),
         id_bodega: 6,
         id_producto: 4,
         cantidad: 45666,
@@ -755,7 +756,7 @@ db.inventarios.insertMany([
         updated_at: '2022-06-03'
     },
     {
-        id: 27,
+        id:  Number(siguienteId("inventarios")),
         id_bodega: 7,
         id_producto: 5,
         cantidad: 45000,
@@ -763,7 +764,7 @@ db.inventarios.insertMany([
         updated_at: '2022-06-03'
     },
     {
-        id: 29,
+        id:  Number(siguienteId("inventarios")),
         id_bodega: 8,
         id_producto: 6,
         cantidad: 45666,
@@ -771,7 +772,7 @@ db.inventarios.insertMany([
         updated_at: '2022-06-03'
     },
     {
-        id: 31,
+        id:  Number(siguienteId("inventarios")),
         id_bodega: 9,
         id_producto: 7,
         cantidad: 6000,
@@ -779,7 +780,7 @@ db.inventarios.insertMany([
         updated_at: '2022-06-03'
     },
     {
-        id: 32,
+        id:  Number(siguienteId("inventarios")),
         id_bodega: 10,
         id_producto: 8,
         cantidad: 89700,
@@ -787,7 +788,7 @@ db.inventarios.insertMany([
         updated_at: '2022-06-03'
     },
     {
-        id: 33,
+        id:  Number(siguienteId("inventarios")),
         id_bodega: 11,
         id_producto: 9,
         cantidad: 9999,
@@ -795,7 +796,7 @@ db.inventarios.insertMany([
         updated_at: '2022-06-03'
     },
     {
-        id: 34,
+        id:  Number(siguienteId("inventarios")),
         id_bodega: 12,
         id_producto: 3,
         cantidad: 7898,
@@ -803,7 +804,7 @@ db.inventarios.insertMany([
         updated_at: '2022-06-03'
     },
     {
-        id: 35,
+        id:  Number(siguienteId("inventarios")),
         id_bodega: 13,
         id_producto: 8,
         cantidad: 55281,
@@ -811,7 +812,7 @@ db.inventarios.insertMany([
         updated_at: '2022-06-03'
     },
     {
-        id: 36,
+        id:  Number(siguienteId("inventarios")),
         id_bodega: 14,
         id_producto: 10,
         cantidad: 5993,
@@ -819,7 +820,7 @@ db.inventarios.insertMany([
         updated_at: '2022-06-03'
     },
     {
-        id: 37,
+        id:  Number(siguienteId("inventarios")),
         id_bodega: 15,
         id_producto: 8,
         cantidad: 5005,
