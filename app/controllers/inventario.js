@@ -1,10 +1,11 @@
 import {con} from "../../config/connection.js";
 import {siguienteId} from "./counter.js";
 
+let db = await con();
+let collection = db.collection("inventarios");
+
 export const getInventarios = async (req, res)=>{
     if (!req.rateLimit) return;
-    let db = await con();
-    let collection = db.collection("inventarios");
     let result = await collection.find({}).toArray();
     res.send(result);
 }
@@ -12,34 +13,8 @@ export const getInventarios = async (req, res)=>{
 export const getInventario = async (req, res)=>{
     if (!req.rateLimit) return;
     const id = Number(req.params.id);
-    let db = await con();
-    let collection = db.collection("inventarios");
     let result = await collection.find({"id":id}).toArray();
     res.send(result);
-}
-
-export const addInventario = async (req, res) => {
-    if (!req.rateLimit) return;
-    const {ID_BODEGA, ID_PRODUCTO, CREATE_BY, CREATE_AT} = req.body;
-    let {CANTIDAD} = req.body
-    let db = await con();
-    let collection = db.collection("inventarios");
-    (CANTIDAD== (undefined || 0))? CANTIDAD: CANTIDAD=10;
-    console.log(CANTIDAD);
-    const newInventarioId = await siguienteId("inventarios");
-    try {
-      const result = await collection.insertOne({
-        id: newInventarioId,
-        id_bodega: ID_BODEGA,
-        id_producto: ID_PRODUCTO,
-        cantidad: CANTIDAD,
-        created_by: CREATE_BY,
-        created_at: CREATE_AT
-    });
-      res.status(201).json({ message: "Inventario added successfully", insertedId: result.insertedId });
-    } catch (error) {
-      res.status(500).json({ message: "Error adding inventario", error: error.message });
-    }
 }
 
 export const deleteInventario = async (req, res) => {
@@ -49,9 +24,6 @@ export const deleteInventario = async (req, res) => {
     res.status(400).json({ message: "inventario ID not provided" });
     return;
   }
-
-  let db = await con();
-  let collection = db.collection("inventarios");
 
   try {
     const result = await collection.deleteOne({ id: inventarioIdToDelete });
@@ -87,9 +59,6 @@ export const updateInventario = async (req, res) => {
     return;
   }
 
-  let db = await con();
-  let collection = db.collection("inventarios");
-
   try {
     const result = await collection.updateOne(
       { id: inventarioIdToUpdate },
@@ -105,3 +74,47 @@ export const updateInventario = async (req, res) => {
     res.status(500).json({ message: "Error updating inventario", error: error.message });
   }
 }
+
+export const insertOrUpdateInventario = async (req, res) => {
+    if (!req.rateLimit) return;
+  
+    const { ID_BODEGA, ID_PRODUCTO } = req.body;
+    let { CANTIDAD } = req.body;
+    CANTIDAD = CANTIDAD ?? 10;
+  
+    if (!ID_BODEGA || !ID_PRODUCTO) {
+      res.status(400).json({ message: "Missing required fields" });
+      return;
+    }
+  
+    try {
+      const existingInventario = await collection.findOne({
+        id_bodega: ID_BODEGA,
+        id_producto: ID_PRODUCTO
+      });
+  
+      if (existingInventario) {
+        const updatedCantidad = existingInventario.cantidad + CANTIDAD;
+        await collection.updateOne(
+          { id_bodega: ID_BODEGA, id_producto: ID_PRODUCTO },
+          { $set: { cantidad: updatedCantidad } }
+        );
+        res.status(200).json({ message: "Inventario updated successfully" });
+      } else {
+        const newInventarioId = await siguienteId("inventarios");
+        await collection.insertOne({
+          id: newInventarioId,
+          id_bodega: ID_BODEGA,
+          id_producto: ID_PRODUCTO,
+          cantidad: CANTIDAD,
+          created_by: req.body.CREATE_BY,
+          created_at: req.body.CREATE_AT
+        });
+        res.status(201).json({ message: "Inventario added successfully" });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Error inserting/updating inventario", error: error.message });
+    }
+}
+  
+  
