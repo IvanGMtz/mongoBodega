@@ -1,10 +1,11 @@
 import {con} from "../../config/connection.js";
 import {siguienteId} from "./counter.js";
 
+let db = await con();
+let collection = db.collection("users");
+
 export const getUsers = async (req, res)=>{
     if (!req.rateLimit) return;
-    let db = await con();
-    let collection = db.collection("users");
     let result = await collection.find({}).toArray();
     res.send(result);
 }
@@ -12,34 +13,56 @@ export const getUsers = async (req, res)=>{
 export const getUser = async (req, res)=>{
     if (!req.rateLimit) return;
     const id = Number(req.params.id);
-    let db = await con();
-    let collection = db.collection("users");
     let result = await collection.find({"id":id}).toArray();
     res.send(result);
 }
 
 export const addUser = async (req, res) => {
-    if (!req.rateLimit) return;
-    const {NOMBRE, EMAIL, ESTADO, PASSWORD} = req.body;
-    let db = await con();
-    let collection = db.collection("users");
+  if (!req.rateLimit) return;
 
-    const newUserId = await siguienteId("users");
-    const newUser = {
-        id: newUserId,
-        nombre: NOMBRE,
-        email: EMAIL,
-        estado: ESTADO,
-        password: PASSWORD
-    };
-    
-    try {
-      const result = await collection.insertOne(newUser);
-      res.status(201).json({ message: "User added successfully", insertedId: result.insertedId });
-    } catch (error) {
-      res.status(500).json({ message: "Error adding user", error: error.message });
+  const requiredFields = [
+    { field: "NOMBRE", message: "User NOMBRE not provided" },
+    { field: "EMAIL", message: "User EMAIL not provided" },
+    { field: "ESTADO", message: "User ESTADO not provided" },
+    { field: "PASSWORD", message: "User PASSWORD not provided" }
+  ];
+
+  for (const { field, message } of requiredFields) {
+    if (req.body[field] === undefined) {
+      return res.status(400).json({ message });
     }
-}
+  }
+
+  const {
+    NOMBRE, EMAIL, ESTADO, PASSWORD,
+    CREATE_BY = 0,
+    UPDATE_BY = 0,
+    CREATE_AT = new Date("0000-00-00"),
+    UPDATE_AT = new Date("0000-00-00"),
+    DELETE_AT = new Date("0000-00-00")
+  } = req.body;
+
+  const newUserId = await siguienteId("users");
+  const newUser = {
+    id: newUserId,
+    nombre: NOMBRE,
+    email: EMAIL,
+    estado: ESTADO,
+    password: PASSWORD,
+    created_by: CREATE_BY,
+    update_by: UPDATE_BY,
+    created_at: CREATE_AT,
+    updated_at: UPDATE_AT,
+    deleted_at: DELETE_AT
+};
+  try {
+    const result = await collection.insertOne(newUser);
+    res.status(201).json({ message: "User added successfully", insertedId: result.insertedId });
+  } catch (error) {
+    res.status(500).json({ message: "Error adding user", error: error.errInfo.details.schemaRulesNotSatisfied[0].propertiesNotSatisfied[0].description});
+  }
+};
+
 
 export const deleteUser = async (req, res) => {
   if (!req.rateLimit) return;
@@ -48,9 +71,6 @@ export const deleteUser = async (req, res) => {
     res.status(400).json({ message: "User ID not provided" });
     return;
   }
-
-  let db = await con();
-  let collection = db.collection("users");
 
   try {
     const result = await collection.deleteOne({ id: userIdToDelete });
@@ -84,9 +104,6 @@ export const updateUser = async (req, res) => {
     res.status(400).json({ message: "Updated user data not provided" });
     return;
   }
-
-  let db = await con();
-  let collection = db.collection("users");
 
   try {
     const result = await collection.updateOne(
