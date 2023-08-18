@@ -14,48 +14,47 @@ db.createCollection("users", {
                     bsonType: 'objectId'
                 },
                 id: {
-                    bsonType: "int",
-                    description: 'La id es obligatoria y debe ser numérica'
+                    bsonType: "int"
                 },
                 nombre: {
                     bsonType: 'string',
-                    description: 'El nombre_usuario es obligatorio',
+                    description: `{"status": "402", "message": 'El parametro NOMBRE es obligatorio y debe ser un string.'}`,
                     pattern: '^[a-zA-ZáÁéÉíÍóÓúÚüÜñÑ ]+$'
                 },
                 email: {
                     bsonType: 'string',
-                    description: 'El email es obligatorio',
+                    description: `{"status": "402", "message": 'El parametro EMAIL es obligatorio y debe ser un string.'}`,
                     pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'
                 },
                 estado: {
                     bsonType: 'int',
-                    description: 'El estado es obligatorio'
+                    description: `{"status": "402", "message": 'El parametro ESTADO es obligatorio y debe ser un numero entero (int).'}`
                 },
                 created_by: {
                     bsonType: 'int',
-                    description: 'El created_by es obligatorio'
+                    description: `{"status": "402", "message": 'El parametro CREATE_BY debe ser un numero entero (int).'}`
                 },
                 update_by: {
                     bsonType: 'int',
-                    description: 'El update_by es obligatorio'
+                    description: `{"status": "402", "message": 'El parametro UPDATE_BY debe ser un numero entero (int).'}`
                 },
                 password: {
                     bsonType: 'string',
-                    description: 'El password es obligatorio'
+                    description: `{"status": "402", "message": 'El parametro PASSWORD es obligatorio y debe ser un string.'}`
                 },
                 created_at: {
                     bsonType: 'date',
-                    description: 'El created_at no es obligatorio ni opcional pero el dato debe ser en formato fecha',
+                    description: `{"status": "402", "message": 'El parametro CREATE_AT debe ser un string en formato YYYY-MM-DD.'}`,
                     pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
                 },
                 updated_at: {
                     bsonType: 'date',
-                    description: 'El updated_at no es obligatorio ni opcional pero el dato debe ser en formato fecha',
+                    description: `{"status": "402", "message": 'El parametro UPDATE_AT debe ser un string en formato YYYY-MM-DD.'}`,
                     pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
                 },
                 deleted_at: {
                     bsonType: 'date',
-                    description: 'El deleted_at no es obligatorio ni opcional pero el dato debe ser en formato fecha',
+                    description: `{"status": "402", "message": 'El parametro DELETE_AT debe ser un string en formato YYYY-MM-DD.'}`,
                     pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
                 }
             }
@@ -82,38 +81,38 @@ db.createCollection("bodegas", {
                 },
                 nombre: {
                     bsonType: 'string',
-                    description: 'El nombre es obligatorio',
+                    description: `{"status": "402", "message": 'El parametro NOMBRE es obligatorio y debe ser un string.'}`,
                     pattern: '^[a-zA-ZáÁéÉíÍóÓúÚüÜñÑ0-9 ]+$'
                 },
                 id_responsable: {
                     bsonType: 'int',
-                    description: 'El id_responsable es obligatorio'
+                    description: `{"status": "402", "message": 'El parametro ID_RESPONSABLE es obligatorio y debe ser un numero entero (int).'}`
                 },
                 estado: {
                     bsonType: 'int',
-                    description: 'El estado es obligatorio'
+                    description: `{"status": "402", "message": 'El parametro ESTADO es obligatorio y debe ser un numero entero (int).'}`
                 },
                 created_by: {
                     bsonType: 'int',
-                    description: 'El created_by es obligatorio'
+                    description: `{"status": "402", "message": 'El parametro CREATE_BY debe ser un numero entero (int).'}`
                 },
                 update_by: {
                     bsonType: 'int',
-                    description: 'El update_by es obligatorio'
+                    description: `{"status": "402", "message": 'El parametro UPDATE_BY debe ser un numero entero (int).'}`
                 },
                 created_at: {
                     bsonType: 'date',
-                    description: 'El created_at no es obligatorio ni opcional pero el dato debe ser en formato fecha',
+                    description: `{"status": "402", "message": 'El parametro CREATE_AT debe ser un string en formato YYYY-MM-DD.'}`,
                     pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
                 },
                 updated_at: {
                     bsonType: 'date',
-                    description: 'El updated_at no es obligatorio ni opcional pero el dato debe ser en formato fecha',
+                    description: `{"status": "402", "message": 'El parametro UPDATE_AT debe ser un string en formato YYYY-MM-DD.'}`,
                     pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
                 },
                 deleted_at: {
                     bsonType: 'date',
-                    description: 'El deleted_at no es obligatorio ni opcional pero el dato debe ser en formato fecha',
+                    description: `{"status": "402", "message": 'El parametro DELETE_AT debe ser un string en formato YYYY-MM-DD.'}`,
                     pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
                 }
             }
@@ -135,26 +134,23 @@ db.createCollection("productos", {
                     bsonType: 'objectId'
                 },
                 id: {
-                    bsonType: "int",
-                    description: 'La id es obligatoria y debe ser numérica'
+                    bsonType: "int"
                 },
                 nombre: {
                     bsonType: 'string',
-                    description: 'El nombre es obligatorio',
-                    pattern: '^[a-zA-ZáÁéÉíÍóÓúÚüÜñÑ ]+$'
+                    description: `{"status": "402", "message": 'El parametro NOMBRE es obligatorio y debe ser un string.'}`
                 },
                 descripcion: {
                     bsonType: 'string',
-                    description: 'La descripción es obligatoria',
-                    pattern: '^[a-zA-ZáÁéÉíÍóÓúÚüÜñÑ ]+$'
+                    description: `{"status": "402", "message": 'El parametro DESCRIPCION no es obligatorio y debe ser un string.'}`
                 },
                 estado: {
                     bsonType: 'int',
-                    description: 'El estado es obligatorio'
+                    description: `{"status": "402", "message": 'El parametro ESTADO es obligatorio y debe ser un numero entero (int).'}`
                 },
                 created_by: {
                     bsonType: 'int',
-                    description: 'El created_by es obligatorio'
+                    description: `{"status": "402", "message": 'El parametro CREATE_BY debe ser un numero entero (int).'}`
                 }
             },
             allOf: [
@@ -162,21 +158,21 @@ db.createCollection("productos", {
                     properties: {
                         update_by: {
                             bsonType: 'int',
-                            description: 'El update_by es obligatorio'
+                            description:  `{"status": "402", "message": 'El parametro UPDATE_BY debe ser un numero entero (int).'}`
                         },
                         created_at: {
                             bsonType: 'date',
-                            description: 'El created_at no es obligatorio ni opcional pero se acepta el dato',
+                            description: `{"status": "402", "message": 'El parametro CREATE_AT debe ser un string en formato YYYY-MM-DD.'}`,
                             pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
                         },
                         updated_at: {
                             bsonType: 'date',
-                            description: 'El updated_at no es obligatorio ni opcional pero se acepta el dato',
+                            description: `{"status": "402", "message": 'El parametro UPDATE_AT debe ser un string en formato YYYY-MM-DD.'}`,
                             pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
                         },
                         deleted_at: {
                             bsonType: 'date',
-                            description: 'El deleted_at no es obligatorio ni opcional pero se acepta el dato',
+                            description: `{"status": "402", "message": 'El parametro DELETE_AT debe ser un string en formato YYYY-MM-DD.'}`,
                             pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
                         }
                     }
@@ -200,42 +196,41 @@ db.createCollection("inventarios", {
                     bsonType: 'objectId'
                 },
                 id: {
-                    bsonType: 'int',
-                    description: 'La id es obligatoria y debe ser numérica'
+                    bsonType: 'int'
                 },
                 id_bodega: {
                     bsonType: 'int',
-                    description: 'El id_bodega es obligatorio'
+                    description:  `{"status": "402", "message": 'El parametro ID_BODEGA es obligatorio y debe ser un numero entero (int).'}`
                 },
                 id_producto: {
                     bsonType: 'int',
-                    description: 'El id_producto es obligatorio'
+                    description:  `{"status": "402", "message": 'El parametro ID_PRODUCTO es obligatorio y debe ser un numero entero (int).'}`
                 },
                 cantidad: {
                     bsonType: 'int',
-                    description: 'La cantidad es obligatoria'
+                    description:  `{"status": "402", "message": 'El parametro CANTIDAD es obligatorio y debe ser un numero entero (int).'}`
                 },
                 created_by: {
                     bsonType: 'int',
-                    description: 'El created_by es obligatorio'
+                    description:  `{"status": "402", "message": 'El parametro CREATE_BY debe ser un numero entero (int).'}`
                 },
                 update_by: {
                     bsonType: 'int',
-                    description: 'El update_by es obligatorio'
+                    description: `{"status": "402", "message": 'El parametro UPDATE_BY debe ser un numero entero (int).'}`
                 },
                 created_at: {
                     bsonType: 'string',
-                    description: 'El created_at no es obligatorio ni opcional pero se acepta el dato',
+                    description:  `{"status": "402", "message": 'El parametro CREATE_AT debe ser un string en formato YYYY-MM-DD.'}`,
                     pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
                 },
                 updated_at: {
                     bsonType: 'string',
-                    description: 'El updated_at no es obligatorio ni opcional pero se acepta el dato',
+                    description:  `{"status": "402", "message": 'El parametro UPDATE_AT debe ser un string en formato YYYY-MM-DD.'}`,
                     pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
                 },
                 deleted_at: {
                     bsonType: 'string',
-                    description: 'El deleted_at no es obligatorio ni opcional pero se acepta el dato',
+                    description:  `{"status": "402", "message": 'El parametro DELETE_AT debe ser un string en formato YYYY-MM-DD.'}`,
                     pattern: '^(?!0000)[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$'
                 }
             }
