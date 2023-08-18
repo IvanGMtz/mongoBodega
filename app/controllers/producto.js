@@ -1,10 +1,11 @@
 import {con} from "../../config/connection.js";
 import {siguienteId} from "./counter.js";
 
+let db = await con();
+let collection = db.collection("productos");
+
 export const getProductos = async (req, res)=>{
     if (!req.rateLimit) return;
-    let db = await con();
-    let collection = db.collection("productos");
     let result = await collection.aggregate([
         {
             $lookup: {
@@ -46,30 +47,61 @@ export const getProductos = async (req, res)=>{
 export const getProducto = async (req, res)=>{
     if (!req.rateLimit) return;
     const id = Number(req.params.id);
-    let db = await con();
-    let collection = db.collection("productos");
+
     let result = await collection.find({"id":id}).toArray();
     res.send(result);
 }
 
-export const addProducto = async (req, res) => {
-    if (!req.rateLimit) return;
-    const {NOMBRE, DESCRIPCION, ESTADO, CREATE_BY} = req.body;
-    let db = await con();
-    let collection = db.collection("productos");
-    const newproductoId = await siguienteId("productos");    
-    try {
-      const result = await collection.insertOne({
-        id: newproductoId,
-        nombre: NOMBRE,
-        descripcion: DESCRIPCION,
-        estado: ESTADO,
-        created_by: CREATE_BY
-    });
-      res.status(201).json({ message: "producto added successfully", insertedId: result.insertedId });
-    } catch (error) {
-      res.status(500).json({ message: "Error adding producto", error: error.message });
+export const addProducto = async (req,res) => {
+  if (!req.rateLimit) return;
+
+  const requiredFields = [
+    { field: "NOMBRE", message: "User NOMBRE not provided" },
+    { field: "DESCRIPCION", message: "User DESCRIPCION not provided" },
+    { field: "ESTADO", message: "User ESTADO not provided" },
+    { field: "CREATE_BY", message: "User CREATE_BY not provided" }
+  ];
+
+  for (const { field, message } of requiredFields) {
+    if (req.body[field] === undefined) {
+      return res.status(400).json({ message });
     }
+  }
+
+  const {
+    NOMBRE, DESCRIPCION, ESTADO,
+    CREATE_BY = 0,
+    UPDATE_BY = 0,
+    CREATE_AT = "0000-00-00",
+    UPDATE_AT = "0000-00-00",
+    DELETE_AT = "0000-00-00"
+  } = req.body;
+  const productoId = await siguienteId("productos");
+  const newProducto={
+    id: productoId,
+    nombre: NOMBRE,
+    descripcion:DESCRIPCION,
+    estado: ESTADO,
+    created_by: CREATE_BY,
+    update_by: UPDATE_BY,
+    created_at: new Date(CREATE_AT),
+    updated_at: new Date(UPDATE_AT),
+    deleted_at: new Date(DELETE_AT)
+}
+  try {
+      let result = await collection.insertOne(newProducto);
+      const newInventarioId = await siguienteId("inventarios");
+      let inventario = db.collection("inventarios");
+      await inventario.insertOne({
+        id: newInventarioId,
+        id_bodega: 1,
+        id_producto: productoId,
+        cantidad: 10
+      })
+      res.status(201).json({ message: "Producto added successfully", insertedId: result.insertedId })
+  } catch (error) {
+    res.status(500).json({ message: "Error adding producto", error: error.errInfo.details.schemaRulesNotSatisfied[0].propertiesNotSatisfied[0].description});
+  }
 }
 
 export const deleteProducto = async (req, res) => {
