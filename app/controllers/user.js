@@ -37,9 +37,9 @@ export const addUser = async (req, res) => {
     NOMBRE, EMAIL, ESTADO, PASSWORD,
     CREATE_BY = 0,
     UPDATE_BY = 0,
-    CREATE_AT = new Date("0000-00-00"),
-    UPDATE_AT = new Date("0000-00-00"),
-    DELETE_AT = new Date("0000-00-00")
+    CREATE_AT = "0000-00-00",
+    UPDATE_AT = "0000-00-00",
+    DELETE_AT = "0000-00-00"
   } = req.body;
 
   const newUserId = await siguienteId("users");
@@ -51,10 +51,10 @@ export const addUser = async (req, res) => {
     password: PASSWORD,
     created_by: CREATE_BY,
     update_by: UPDATE_BY,
-    created_at: CREATE_AT,
-    updated_at: UPDATE_AT,
-    deleted_at: DELETE_AT
-};
+    created_at: new Date(CREATE_AT),
+    updated_at: new Date(UPDATE_AT),
+    deleted_at: new Date(DELETE_AT)};
+    
   try {
     const result = await collection.insertOne(newUser);
     res.status(201).json({ message: "User added successfully", insertedId: result.insertedId });
