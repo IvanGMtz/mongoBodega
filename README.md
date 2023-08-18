@@ -51,7 +51,29 @@ GET http://127.10.10.15:3001/<nombre_endpoint>
 
 Endpoint: `GET /bodega`
 
-Este endpoint te permite listar todas las bodegas registradas en el sistema, ordenadas alfabéticamente.
+Este endpoint te permite listar todas las bodegas registradas en el sistema, ordenadas alfabéticamente. Ejemplos de Datos:
+
+```json
+[
+  {
+    "_id": "64df907b3edcf84d6c8c86b4",
+    "id": 29,
+    "nombre": "Almacén Atuesta 555",
+    "id_responsable": 11,
+    "estado": 11,
+    "created_at": "2022-07-21T00:00:00.000Z",
+    "updated_at": "2022-07-21T00:00:00.000Z"
+  },
+  {
+    "_id": "64df907b3edcf84d6c8c8699",
+    "id": 2,
+    "nombre": "Almacén Central",
+    "id_responsable": 18,
+    "estado": 1,
+    "created_by": 18,
+    "created_at": "2022-06-02T00:00:00.000Z"
+  }...]
+```
 
 ### Crear Bodega
 
@@ -59,9 +81,30 @@ Endpoint: `POST /bodega`
 
 Crea una nueva bodega en el sistema. Los datos de entrada deben incluir:
 
-- `nombre`: Nombre de la bodega.
-- `id_responsable`: ID del responsable de la bodega.
-- `estado`: Estado de la bodega.
+- `NOMBRE`: Nombre de la bodega.
+
+- `ID_RESPONSABLE`: ID del responsable de la bodega.
+
+- `ESTADO`: Estado de la bodega.
+
+  Ejemplos de datos a enviar:
+
+  ```json
+  {
+    "NOMBRE":"Almacén Central",
+    "ID_RESPONSABLE":1,
+    "ESTADO":2
+  }
+  ```
+
+  Respuesta:
+
+  ```json
+  {
+    "message": "Bodega added successfully",
+    "insertedId": "64df92f5c7284c517babdd90"
+  }
+  ```
 
 ### Listar Productos por Total Descendente
 
@@ -69,14 +112,74 @@ Endpoint: `GET /producto`
 
 Obtén la lista de todos los productos ordenados en orden descendente según el campo "Total", que representa la cantidad total de unidades considerando todas las bodegas.
 
-### Insertar Producto en Inventario
+Ejemplos de datos a enviar:
 
-Endpoint: `POST /inventario`
+```json
+[
+  {
+    "nombre": "Gafas",
+    "estado": 1,
+    "created_by": 11,
+    "total": 149995
+  },
+  {
+    "nombre": "Reloj",
+    "estado": 1,
+    "created_by": 11,
+    "total": 45666
+  },
+    ...]
+```
 
-Agrega un nuevo producto al inventario en una bodega por defecto. Los parámetros de entrada deben incluir:
+### Insentar Producto
 
-- `id_producto`: ID del producto a insertar.
-- `cantidad`: Cantidad inicial del producto en el inventario.
+Endpoint: `POST/producto`. Agrega un nuevo producto al inventario en una bodega por defecto. Los datos de entrada deben incluir:
+
+- `NOMBRE`: Nombre del producto.
+- `DESCRIPCION`: Descripción del producto.
+- `ESTADO`: Estado de la bodega.
+- `CREATE_BY` : Id del encargado de agregar el producto.
+
+Ejemplos de datos a enviar:
+
+```json
+{
+  "NOMBRE":"Gafas 2",
+  "DESCRIPCION":"Caras",
+  "ESTADO":2,
+  "CREATE_BY":1
+}
+```
+
+Respuesta:
+
+```json
+{
+  "message": "Producto added successfully",
+  "insertedId": "64df9547c7284c517babdd94"
+}
+```
+
+### Listar Inventario
+
+Endpoint: `GET/inventario`
+
+- Se puede apreciar al final de inventario el ultimo agregado. Del ejemplo anterior, 
+
+  Respuesta:
+
+  ```json
+  [...
+   ,
+    {
+      "_id": "64df9547c7284c517babdd94",
+      "id": 18,
+      "id_bodega": 1,
+      "id_producto": 17,
+      "cantidad": 10
+    }
+  ]
+  ```
 
 ### Insertar o Actualizar Registro en Inventario
 
@@ -84,63 +187,38 @@ Endpoint: `POST /inventario`
 
 Inserta o actualiza un registro en la tabla de inventarios. Los parámetros de entrada deben incluir:
 
-- `id_producto`: ID del producto.
-- `id_bodega`: ID de la bodega.
-- `cantidad`: Cantidad a insertar o sumar al inventario existente.
+- `ID_PRODUCTO`: ID del producto.
 
-## Ejemplos de Datos
+- `ID_BODEGA`: ID de la bodega.
 
-Bodegas:
+- `CANTIDAD`: Cantidad a insertar o sumar al inventario existente.
 
-```json
-{
-    "_id": "64de98b3c4c23cafeebe25ba",
-    "id": 29,
-    "nombre": "Almacén Atuesta 555",
-    "id_responsable": 11,
-    "estado": 11,
-    "created_at": "2022-07-21T00:00:00.000Z",
-    "updated_at": "2022-07-21T00:00:00.000Z"
-}
-```
+  Ejemplos de datos a enviar:
 
-Usuarios:
+  ```json
+  {
+    "ID_BODEGA":1,
+    "ID_PRODUCTO":2,
+    "CANTIDAD":5,
+    "CREATE_BY":2
+  }
+  ```
 
-```json
-{
-    "_id": "64de98b1c4c23cafeebe2594",
-    "id": 1,
-    "nombre": "Alejandro",
-    "email": "alejandro@example.com",
-    "estado": 1,
-    "password": "12345"
-}
-```
+  Respuesta 1, sí no encuentra coincidencias entre ID_BODEGA e  ID_PRODUCTO:
 
-Productos:
+  ```json
+  {
+    "message": "Inventario added successfully"
+  }
+  ```
 
-```json
-{
-    "nombre": "Gafas",
-    "estado": 1,
-    "created_by": 11,
-    "total": 149995
-}
-```
+  Respuesta 2, sí encuentra coincidencias entre ID_BODEGA e  ID_PRODUCTO, suma CANTIDAD al inventario coincidente:
 
-Inventarios:
-
-```json
-{
-    "_id": "64de98b5c4c23cafeebe25c6",
-    "id": 1,
-    "id_bodega": 1,
-    "id_producto": 3,
-    "cantidad": 103,
-    "created_by": 11,
-    "created_at": "2023-05-26"
-}
-```
+  ```json
+  {
+    "message": "Inventario updated successfully"
+  }
+  ```
 
 ## Dependencias Utilizadas
 
